@@ -75,8 +75,7 @@ Jeśli dane mają się wczytać raz i nie mają być reaktywne to możemy użyć
 Atrybuty są iterowane po wartościach pseudo tablicy
 
 ```html
-$0.attributes
-NamedNodeMap {0: href, href: href, length: 1}
+$0.attributes NamedNodeMap {0: href, href: href, length: 1}
 ```
 
 ### Shortcut
@@ -88,3 +87,65 @@ NamedNodeMap {0: href, href: href, length: 1}
 ```html
 <a :href="url">{{ url }}</a>
 ```
+
+### Wykrywanie zmian
+
+Vue bazuje na `getterach & setterach`, w momencie wywołanie `settera` zostaje uruchomione sprawdzenie virtualnego domu i podmiana wartości.
+
+### Single source of truth
+
+```html
+$vm0.items (3) ['sok', 'melko', 'chleb', __ob__: Observer]
+$vm0.items.push("hello")
+```
+
+Podczas wykonania metody `push` nie wywoła się setter. Vue wie, że items to tablica, defaultowa metoda zostaje zastąpiona nową metodą, która wywoła defaultową metodę oraz analizę przerenderowania widoku.
+
+#### Opakowane metody:
+
+- push
+- pop
+- shift
+- unshift
+- splice
+- sort
+- reverse
+
+#### `Ciekawostka`
+
+Vue potrafi porównać dwie tablice i jeżeli np.: bazuje na nich renderowanie elementów listy, to zostawi na stronie te elementy, które należą do zbioru wspólnego. Wpływa to na wydajność.
+
+### Montowanie aplikacji
+
+```js
+const vm = new Vue({
+  template: "<h1>{{ fullName }}</h1>",
+  data: {
+    firstName: "Jan",
+    lastName: "Kowalski",
+  },
+  computed: {
+    fullName() {
+      return `${this.firstName} ${this.lastName}`;
+    },
+  },
+});
+
+vm.$mount();
+
+setTimeout(() => {
+  document.querySelector("#app").appendChild(vm.$el);
+}, 1000);
+```
+
+Możemy też użyć skrypu z dowolną nazwą po `/`, ponieważ jeśli przeglądarka go nie zrozumie to nie wyrzuci o tym błędu
+
+```js
+template: "#app-template";
+```
+
+W `root` może być tylko jeden element!
+
+### Lifecycle Diagram
+
+![img.png](src/imgs/diagram.png)

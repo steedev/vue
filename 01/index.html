@@ -21,35 +21,36 @@
     </style>
   </head>
   <body>
-    <div class="container grid-lg">
-      <div id="app" v-cloak>
-        <h1 v-html="embolden(fullName)" v-once></h1>
-        <a :href="url">{{ url }}</a>
+    <div class="container grid-lg"></div>
+
+    <script id="app-template" type="text/x-template">
+      <div id="app">
+        <h1>{{ fullName }}</h1>
+        <h2>hello world</h2>
       </div>
-    </div>
+    </script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.js"></script>
 
     <script>
-      new Vue({
-        el: "#app",
+      const vm = new Vue({
+        template: "#app-template",
         data: {
           firstName: "Jan",
           lastName: "Kowalski",
-          url: "https://jankowalski.pl",
         },
         computed: {
           fullName() {
             return `${this.firstName} ${this.lastName}`;
           },
         },
-
-        methods: {
-          embolden(value) {
-            return `<strong>${value}</strong>`;
-          },
-        },
       });
+
+      vm.$mount();
+
+      setTimeout(() => {
+        document.querySelector(".container").appendChild(vm.$el);
+      }, 1000);
     </script>
   </body>
 </html>
